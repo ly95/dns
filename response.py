@@ -32,7 +32,7 @@ class Response(Message):
     CLASS = 0
     TTL = 600
     RDLENGTH = 0
-    RDATA = 0
+    RDATA = None
 
     def code(self):
         # Initiation
@@ -73,8 +73,6 @@ class Response(Message):
         # x'001C (28) An AAAA record(s) for the domain name
         if self.TYPE is 1:
             buffer = self.code_ip(buffer, self.RDATA)
-        elif self.TYPE is 12:
-            buffer = self.code_domain(buffer, self.RDATA)
 
         # print(buffer)
 

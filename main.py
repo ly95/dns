@@ -19,8 +19,12 @@ import logging
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
-    run_server()
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
+    try:
+        run_server()
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == '__main__':

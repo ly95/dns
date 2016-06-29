@@ -33,12 +33,12 @@ class Resolver(object):
     def do(self):
         self.decode()
         self.make_response()
-        self.search()
 
         try:
+            self.search()
             return self.response.code()
         except NotSupportException as e:
-            logging.error(e.message)
+            logging.error(e)
             self.make_not_found_response()
             return self.response.code()
 
@@ -48,7 +48,7 @@ class Resolver(object):
     def make_not_found_response(self):
         self.response.QDCOUNT = 1
         self.response.ANCOUNT = 1
-        self.response.RDATA = 0
+        self.response.RDATA = ''
         self.response.RCODE = CODE_NameError
         self.response.RDLENGTH = 1
 
