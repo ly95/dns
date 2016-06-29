@@ -1,5 +1,6 @@
 import struct
 import logging
+from error import DecodeException
 
 HEADER_OFFSET = 12
 
@@ -55,7 +56,7 @@ class Message(object):
 
     def get16bits(self, char):
         if len(char) < 2:
-            raise ("char err")
+            raise DecodeException("char err")
 
         i = char[0] << 8
         i += char[1]

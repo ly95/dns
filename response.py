@@ -1,4 +1,5 @@
 from message import Message, HEADER_OFFSET
+from error import NotSupportException
 import struct
 import logging
 
@@ -60,7 +61,7 @@ class Response(Message):
         if self.TYPE is 1:
             buffer = self.code_ip(buffer, self.RDATA)
         else:
-            raise ("not support QTYPE: " + str(self.TYPE))
+            raise NotSupportException("not support QTYPE: " + str(self.TYPE))
 
         # print(buffer)
 

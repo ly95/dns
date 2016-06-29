@@ -1,5 +1,6 @@
 from query import decode
 import logging
+from error import NotSupportException
 from response import Response, CODE_NameError, CODE_OK
 
 
@@ -18,10 +19,18 @@ class Resolver(object):
         self.make_response()
         self.search()
 
-        return self.response.code()
+        try:
+            return self.response.code()
+        except NotSupportException, e:
+            logging.error(e.message)
+            self.make_not_found_response()
+            return self.response.code()
 
     def decode(self):
         self.query = decode(self.bytes_data)
+
+    def make_not_found_response(self):
+        pass
 
     def make_response(self):
         self.response = Response()
