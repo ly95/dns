@@ -1,5 +1,4 @@
 from message import Message, HEADER_OFFSET
-from error import NotSupportException
 import struct
 import logging
 
@@ -60,8 +59,8 @@ class Response(Message):
         # x'001C (28) An AAAA record(s) for the domain name
         if self.TYPE is 1:
             buffer = self.code_ip(buffer, self.RDATA)
-        else:
-            raise NotSupportException("not support QTYPE: " + str(self.TYPE))
+        elif self.TYPE is 12:
+            buffer = self.code_domain(buffer, self.RDATA)
 
         # print(buffer)
 

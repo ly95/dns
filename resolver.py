@@ -30,7 +30,11 @@ class Resolver(object):
         self.query = decode(self.bytes_data)
 
     def make_not_found_response(self):
-        pass
+        self.response.QDCOUNT = 1
+        self.response.ANCOUNT = 1
+        self.response.RDATA = 0
+        self.response.RCODE = CODE_NameError
+        self.response.RDLENGTH = 1
 
     def make_response(self):
         self.response = Response()
@@ -41,13 +45,11 @@ class Resolver(object):
         self.response.CLASS = self.query.QCLASS
 
     def search(self):
-        self.response.QDCOUNT = 1
-        self.response.ANCOUNT = 1
-        self.response.RDATA = '127.0.0.1'
-
-        if len(self.query.QNAME) is 0:
-            self.response.RCODE = CODE_NameError
-            self.response.RDLENGTH = 1
-        else:
+        if self.query.QTYPE is 1:
+            self.response.QDCOUNT = 1
+            self.response.ANCOUNT = 1
+            self.response.RDATA = '127.0.0.1'
             self.response.RCODE = CODE_OK
             self.response.RDLENGTH = 4
+        else:
+            raise NotSupportException("not support QTYPE: " + str(self.TYPE))
