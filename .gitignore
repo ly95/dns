@@ -1,2 +1,4 @@
+*.pyc
 .idea
 domain_name_system.iml
+__pycache__

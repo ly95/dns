@@ -1,6 +1,8 @@
 import struct
 import logging
 
+HEADER_OFFSET = 12
+
 QR_REQUEST = 0
 QR_RESPONSE = 1
 
@@ -13,17 +15,17 @@ STATUS = 2
 class Message(object):
     ID = None
     QR = None
-    OPCODE = None
-    AA = None
-    TC = None
-    RD = None
-    RA = None
-    Z = None
+    OPCODE = 0
+    AA = 0
+    TC = 0
+    RD = 0
+    RA = 0
+    Z = 0
     RCODE = None
-    QDCOUNT = None
-    ANCOUNT = None
-    NSCOUNT = None
-    ARCOUNT = None
+    QDCOUNT = 0
+    ANCOUNT = 0
+    NSCOUNT = 0
+    ARCOUNT = 0
 
     pos = 0
 
@@ -34,15 +36,13 @@ class Message(object):
         self.ID = self.get16bits(self.chunk(data))
         header = self.get16bits(self.chunk(data))
 
-        logging.debug(("message header = %d" % header))
-
-        self.QR = (header & int('1000000000000000', 2)) >> 15
-        self.OPCODE = (header & int('111100000000000', 2)) >> 11
-        self.AA = (header & int('10000000000', 2)) >> 10
-        self.TC = (header & int('1000000000', 2)) >> 9
-        self.RD = (header & int('100000000', 2)) >> 8
-        self.RA = (header & int('10000000', 2)) >> 7
-        self.Z = (header & int('11110000', 2)) >> 4
+        self.QR = header >> 15
+        self.OPCODE = header >> 11
+        self.AA = header >> 10
+        self.TC = header >> 9
+        self.RD = header >> 8
+        self.RA = header >> 7
+        self.Z = header >> 4
         self.RCODE = header & int('1111', 2)
 
         self.QDCOUNT = self.get16bits(self.chunk(data))
@@ -57,26 +57,24 @@ class Message(object):
         if len(char) < 2:
             raise ("char err")
 
-        i = struct.unpack('B', char[0])[0] << 8
-        i += struct.unpack('B', char[1])[0]
+        i = char[0] << 8
+        i += char[1]
 
         self.pos += 2
 
         return i
 
-    def test(self):
-        print("-------")
-        print("ID = ", self.ID)
-        print("QR = ", self.QR)
-        print("OPCODE = ", self.OPCODE)
-        print("AA = ", self.AA)
-        print("TC = ", self.TC)
-        print("RD = ", self.RD)
-        print("RA = ", self.RA)
-        print("Z = ", self.Z)
-        print("RCODE = ", self.RCODE)
-        print("QDCOUNT = ", self.QDCOUNT)
-        print("ANCOUNT = ", self.ANCOUNT)
-        print("NSCOUNT = ", self.NSCOUNT)
-        print("ARCOUNT = ", self.ARCOUNT)
-        print("-------")
+    def make_flages(self):
+        # 8 bits
+        flags = self.QR << 15
+        flags += self.OPCODE << 14
+        flags += self.AA << 10
+        flags += self.TC << 9
+        flags += self.RD << 8
+
+        # 8 bits
+        flags += self.RA << 7
+        flags += self.Z << 4
+        flags += self.RCODE
+
+        return flags
